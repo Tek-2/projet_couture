@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des stocks{% endblock %}
+
+{% block body %}
+    <h1>Gestion des stocks</h1>
+
+    <div class="table-contaner">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Taille</th>
+                    <th>Quantité</th>
+                    <th>Image Variante</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for stock_location in stock_locations %}
+                <tr>
+                    <td>{{ stock_location.id }}</td>
+                    <td>{{ stock_location.taille }}</td>
+                    <td>{{ stock_location.quantite }}</td>
+                    <td>{% if stock_location.imageVariante %}
+                        <img src="{{ asset('uploads/' ~ stock_location.imageVariante) }}" alt="{{ stock_location.id }}">
+                    {% else %}
+                        N/A
+                    {% endif %}</td>
+                    <td>
+                        <a class="btn btn-primary" href="{{ path('app_stock_location_show', {'id': stock_location.id}) }}">
+                            <i class="fa fa-eye"></i>
+                        </a>
+                        <a class="btn btn-warning" href="{{ path('app_stock_location_edit', {'id': stock_location.id}) }}">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="create-btn">
+        <a class="btn btn-success" href="{{ path('app_stock_location_new') }}">Ajouter un stock</a>
+    </div>
+{% endblock %}

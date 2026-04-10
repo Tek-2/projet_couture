@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier un entretien{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-white">
+                    <h4 class="mb-0"><i class="fa fa-edit me-2"></i> Modifier un entretien</h4>
+                </div>
+                <div class="card-body">
+                    {{ include('entretien/_form.html.twig', {'button_label': 'Sauvegarder'}) }}
+                </div>
+
+                <div class="card-footer d-flex justify-content-between">
+                    <a class="btn btn-secondary" href="{{ path('app_entretien_index') }}">
+                        <i class="fa fa-arrow-left me-1"></i> Retour à la liste
+                    </a>
+
+                    {{ include('entretien/_delete_form.html.twig') }}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

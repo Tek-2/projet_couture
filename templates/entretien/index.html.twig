@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Entretien index{% endblock %}
+
+{% block body %}
+    <h1>Tableau d'entretien</h1>
+
+    <div class="table-contaner">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Lavage</th>
+                    <th>Nettoyage sec</th>
+                    <th>Repassage</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for entretien in entretiens %}
+                <tr>
+                    <td>{{ entretien.id }}</td>
+                    <td>{{ entretien.lavage }}</td>
+                    <td>{{ entretien.nettoyageSec }}</td>
+                    <td>{{ entretien.repassage }}</td>
+                    <td>{{ entretien.description }}</td>
+                    <td>
+                        <a class="btn btn-primary" href="{{ path('app_entretien_show', {'id': entretien.id}) }}">
+                            <i class="fa fa-eye"></i>
+                        </a>
+                        <a class="btn btn-warning" href="{{ path('app_entretien_edit', {'id': entretien.id}) }}">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="create-btn">
+        <a class="btn btn-success" href="{{ path('app_entretien_new') }}">Ajouter un entretien</a>
+    </div>
+{% endblock %}

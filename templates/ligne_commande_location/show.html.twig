@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}LigneCommandeLocation{% endblock %}
+
+{% block body %}
+    <h1>LigneCommandeLocation</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ ligne_commande_location.id }}</td>
+            </tr>
+            <tr>
+                <th>Prix</th>
+                <td>{{ ligne_commande_location.prix }}</td>
+            </tr>
+            <tr>
+                <th>Quantite</th>
+                <td>{{ ligne_commande_location.quantite }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_ligne_commande_location_index') }}">back to list</a>
+
+    <a href="{{ path('app_ligne_commande_location_edit', {'id': ligne_commande_location.id}) }}">edit</a>
+
+    {{ include('ligne_commande_location/_delete_form.html.twig') }}
+{% endblock %}

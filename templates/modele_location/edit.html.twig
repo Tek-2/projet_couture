@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier un modèle location{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-white">
+                    <h4 class="mb-0"><i class="fa fa-edit me-2"></i> Modifier un modèle location</h4>
+                </div>
+                <div class="card-body">
+                    {{ include('modele_location/_form.html.twig', {'button_label': 'Sauvegarder'}) }}
+                </div>
+
+                <div class="card-footer d-flex justify-content-between">
+                    <a class="btn btn-secondary" href="{{ path('app_modele_location_index') }}">
+                        <i class="fa fa-arrow-left"></i> Retour à la liste
+                    </a>
+
+                    {{ include('modele_location/_delete_form.html.twig', {'button_label': '<i class="fa fa-trash"></i> Supprimer'|raw}) }}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

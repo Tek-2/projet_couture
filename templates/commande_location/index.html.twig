@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Historique des commandes{% endblock %}
+
+{% block body %}
+    <h1>Historique des commandes</h1>
+
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Date commande</th>
+                    <th>Type</th>
+                    <th>Début loc</th>
+                    <th>Fin loc</th>
+                    <th>Statut</th>
+                    <th>Montant Total</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for commande_location in commande_locations %}
+                <tr>
+                    <td>{{ commande_location.id }}</td>
+                    <td>{{ commande_location.dateCommande ? commande_location.dateCommande|date('Y-m-d H:i:s') : '' }}</td>
+                    <td>{{ commande_location.location ? 'Location' : 'Achat' }}</td>
+                    <td>{{ commande_location.dateDebutLoc ? commande_location.dateDebutLoc|date('d/m/y') : '' }}</td>
+                    <td>{{ commande_location.dateFinLoc ? commande_location.dateFinLoc|date('d/m/y') : '' }}</td>
+                    <td class="statut-{{ commande_location.statut }}">{{ commande_location.statut }}</td>
+                    <td>{{ commande_location.montantTotal ? commande_location.montantTotal|number_format(2, ',', ' ') ~ ' €' }}</td>
+                    <td>
+                        <a class="btn btn-primary" href="{{ path('app_commande_location_show', {'id': commande_location.id}) }}"><i class="fa fa-eye"></i></a>
+                        <a class="btn btn-warning" href="{{ path('app_commande_location_edit', {'id': commande_location.id}) }}"><i class="fa fa-edit"></i></a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="8">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="create-btn">
+        <a class="btn btn-success" href="{{ path('app_commande_location_new') }}">Ajouter une commande</a>
+    </div>
+{% endblock %}

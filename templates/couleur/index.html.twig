@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Couleur Index{% endblock %}
+
+{% block body %}
+    <h1>Liste des Couleurs</h1>
+
+    <div class="table-contaner">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Couleur</th>
+                    <th>Image</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for couleur in couleurs %}
+                <tr>
+                    <td>{{ couleur.id }}</td>
+                    <td>{{ couleur.nomCouleur }}</td>
+                    <td>
+                        {% if couleur.image %}
+                            <img src="{{ couleur.image }}" alt="{{ couleur.nomCouleur }}">                        
+                            {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a class="btn btn-primary" href="{{ path('app_couleur_show', {'id': couleur.id}) }}"><i class="fa fa-eye"></i></a>
+                        <a class="btn btn-warning" href="{{ path('app_couleur_edit', {'id': couleur.id}) }}"><i class="fa fa-edit"></i></a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">Aucune couleur trouvée</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="create-btn">
+        <a class="btn btn-success" href="{{ path('app_couleur_new') }}">Créer une nouvelle couleur</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{# 
+{{ form_start(form) }}
+    {{ form_widget(form) }}
+    <button class="btn btn-success">{{ button_label|default('Enregistrer') }}</button>
+{{ form_end(form) }}
+#}
+
+
+{{ form_start(form) }}
+
+{# Boucle sur tous les champs du formulaire #}
+{% for child in form %}
+    {% if child.vars.name != '_token' %} {# ignore le token CSRF #}
+        <div class="row mb-3 align-items-center">
+            <div class="col-sm-2">
+                {{ form_label(child, null, {'label_attr': {'class': 'col-form-label fw-semibold'}}) }}
+            </div>
+            <div class="col-sm-8">
+                {{ form_widget(child, {
+                    'attr': {
+                        'class': 'form-control',
+                        'placeholder': child.vars.label|default(child.vars.name)|capitalize
+                    }
+                }) }}
+                {{ form_errors(child) }}
+            </div>
+        </div>
+    {% endif %}
+{% endfor %}
+
+<div class="d-flex justify-content-center">
+    <button class="btn btn-success"><i class="fa fa-floppy-disk me-1"></i>
+        {{ button_label|default('Enregistrer') }}
+    </button>
+</div>
+
+{{ form_end(form) }}
+

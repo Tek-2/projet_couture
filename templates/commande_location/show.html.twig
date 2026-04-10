@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail de la commande location{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fa fa-shopping-cart me-2"></i> Détail de la commande location
+                    </h4>
+                </div>
+
+                <div class="card-body">
+                    <table class="table table-borderless mb-0">
+                        <tbody>
+                            <tr>
+                                <th class="text-muted w-50">Id</th>
+                                <td>{{ commande_location.id }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Date de commande</th>
+                                <td>{{ commande_location.dateCommande ? commande_location.dateCommande|date('d/m/Y H:i') : '' }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Date début location</th>
+                                <td>{{ commande_location.dateDebutLoc ? commande_location.dateDebutLoc|date('d/m/Y') : '' }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Date fin location</th>
+                                <td>{{ commande_location.dateFinLoc ? commande_location.dateFinLoc|date('d/m/Y') : '' }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Statut</th>
+                                <td>{{ commande_location.statut }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Montant total</th>
+                                <td>{{ commande_location.montantTotal }} €</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card-footer d-flex justify-content-between">
+                    <a class="btn btn-secondary" href="{{ path('app_commande_location_index') }}">
+                        <i class="fa fa-arrow-left"></i> Retour
+                    </a>
+
+                    <div class="d-flex gap-2">
+                        <a class="btn btn-warning" href="{{ path('app_commande_location_edit', {'id': commande_location.id}) }}">
+                            <i class="fa fa-edit"></i> Modifier
+                        </a>
+
+                        {{ include('commande_location/_delete_form.html.twig') }}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier une couleur{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-white">
+                    <h4 class="mb-0"><i class="fa fa-edit me-2"></i> Modifier une couleur</h4>
+                </div>
+                <div class="card-body">
+                    {{ include('couleur/_form.html.twig', {'button_label': 'Sauvegarder'}) }}
+                </div>
+
+                <div class="card-footer d-flex justify-content-between">
+                    <a class="btn btn-secondary" href="{{ path('app_couleur_index') }}">
+                        <i class="fa fa-arrow-left me-1"></i> Retour à la liste
+                    </a>
+
+                    {{ include('couleur/_delete_form.html.twig') }}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

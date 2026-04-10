@@ -5,13 +5,47 @@
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
         {% block stylesheets %}
-        {% endblock %}
+        
+        <link rel="stylesheet" href="{{ asset('assets/styles/app.css') }}">
+
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+        <!-- FONTSAWESOME -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+{% endblock %}
+
+        
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
 
         {% block javascripts %}
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
+        
     </head>
     <body>
+        <header class="site-header">
+    <div class="logo">aTELier</div>
+    <nav>
+        <a href="#">Collection</a>
+        <a href="#">Catégories</a>
+        <a href="#">À propos</a>
+        <a href="#">Contact</a>
+    <a href="#" class="cart-link">
+        <i class="fas fa-shopping-cart"></i>
+    </a>
+    {% if app.user %}
+        <a href="{{ path('app_logout') }}" class="auth-link">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    {% else %}
+        <a href="{{ path('app_login') }}" class="auth-link">
+            <i class="fas fa-sign-in-alt"></i> Login
+        </a>
+    {% endif %}
+    </nav>
+</header>
         {% block body %}{% endblock %}
     </body>
 </html>

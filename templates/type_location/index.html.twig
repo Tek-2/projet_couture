@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Types de location{% endblock %}
+
+
+{% block body %}
+    <h1>Liste des types de vêtements</h1>
+
+    <div class="table-contaner">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Libellé</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for type_location in type_locations %}
+                <tr>
+                    <td>{{ type_location.id }}</td>
+                    <td>{{ type_location.libelle }}</td>
+                    <td>
+                        <a class="btn btn-primary " href="{{ path('app_type_location_show', {'id': type_location.id}) }}">
+                            <i class="fa fa-eye"></i>
+                        </a>
+                        <a class="btn btn-warning" href="{{ path('app_type_location_edit', {'id': type_location.id}) }}">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="create-btn">
+        <a class="btn btn-success" href="{{ path('app_type_location_new') }}">Ajouter un type</a>
+    </div>
+{% endblock %}
