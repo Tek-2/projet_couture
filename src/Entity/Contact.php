@@ -7,6 +7,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 
+use function PHPUnit\Framework\once;
+
 #[ORM\Entity(repositoryClass: ContactRepository::class)]
 #[ApiResource]
 class Contact
@@ -26,6 +28,7 @@ class Contact
     private ?\DateTime $date = null;
 
     #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?User $id_user = null;
 
     public function getId(): ?int

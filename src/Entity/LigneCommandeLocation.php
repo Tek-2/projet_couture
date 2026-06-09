@@ -17,11 +17,11 @@ class LigneCommandeLocation
     private ?int $id = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?CommandeLocation $id_commandeloc = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?StockLocation $id_stockloc = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]

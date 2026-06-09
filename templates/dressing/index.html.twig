@@ -1,0 +1,146 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dressing — Notre Collection{% endblock %}
+
+{% block body %}
+
+{# ===== HERO ===== #}
+<div class="collection-hero">
+    <div class="collection-hero-overlay"></div>
+    <div class="collection-hero-content">
+        <h1>Notre Dressing</h1>
+        <p>Des créations uniques pour sublimer chaque occasion</p>
+    </div>
+</div>
+
+{# ===== FILTERS ===== #}
+<div class="collection-filters">
+    <div class="filters-wrapper">
+        <h3><i class="fas fa-sliders-h me-2"></i>Affiner la recherche</h3>
+        <form method="get" class="filters-form">
+            <div class="filter-group">
+                <label for="search">Libellé</label>
+                <input type="text" id="search" name="search" class="filter-input"
+                       placeholder="Ex: Robe de soirée..." value="{{ app.request.query.get('search') }}">
+            </div>
+            <div class="filter-group">
+                <label for="silhouette">Silhouette</label>
+                <input type="text" id="silhouette" name="silhouette" class="filter-input"
+                       placeholder="Ex: Évasée, Droite..." value="{{ app.request.query.get('silhouette') }}">
+            </div>
+            <div class="filter-group">
+                <label for="tissu">Tissu</label>
+                <input type="text" id="tissu" name="tissu" class="filter-input"
+                       placeholder="Ex: Soie, Dentelle..." value="{{ app.request.query.get('tissu') }}">
+            </div>
+            <div class="filter-group">
+                <label for="longueur">Longueur</label>
+                <input type="text" id="longueur" name="longueur" class="filter-input"
+                       placeholder="Ex: Mini, Midi, Maxi..." value="{{ app.request.query.get('longueur') }}">
+            </div>
+            <div class="filter-group" style="justify-content: flex-end;">
+                <div class="filter-actions">
+                    <button type="submit" class="btn-filter-apply">
+                        <i class="fas fa-search me-1"></i>Filtrer
+                    </button>
+                    <a href="{{ path('app_dressing_index') }}" class="btn-filter-reset">
+                        <i class="fas fa-times me-1"></i>Réinitialiser
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# ===== COLLECTION ===== #}
+<section class="collection-section">
+    <div class="collection-header">
+        <h2>La Collection</h2>
+        <p class="results-count">
+            {{ modele_locations|length }} modèle{{ modele_locations|length > 1 ? 's' : '' }} disponible{{ modele_locations|length > 1 ? 's' : '' }}
+        </p>
+    </div>
+
+    {% if modele_locations is empty %}
+        <div class="no-results">
+            <i class="fas fa-search"></i>
+            <h3>Aucun modèle trouvé</h3>
+            <p>Essayez de modifier vos critères de recherche.</p>
+            <a href="{{ path('app_dressing_index') }}" class="btn-reset">
+                Voir toute la collection
+            </a>
+        </div>
+    {% else %}
+        <div class="collection-grid">
+            {% for modele in modele_locations %}
+                <div class="collection-item">
+
+                    <div class="item-image-wrapper">
+                        <div class="item-image placeholder d-flex align-items-center justify-content-center">
+                            <i class="fas fa-shirt" style="font-size:4rem; color:#d8a8a8;"></i>
+                        </div>
+                        <div class="item-overlay">
+                            <a href="{{ path('app_modele_location_show', {'id': modele.id}) }}"
+                               class="btn-view-details">
+                                <i class="fas fa-eye me-1"></i>Voir le détail
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="item-content">
+                        <h3 class="item-title">{{ modele.libelle }}</h3>
+
+                        <div class="item-specs">
+                            {% if modele.tissu %}
+                                <span class="spec-tag"><i class="fas fa-layer-group me-1"></i>{{ modele.tissu }}</span>
+                            {% endif %}
+                            {% if modele.silhouette %}
+                                <span class="spec-tag"><i class="fas fa-person-dress me-1"></i>{{ modele.silhouette }}</span>
+                            {% endif %}
+                            {% if modele.longueur %}
+                                <span class="spec-tag"><i class="fas fa-ruler-vertical me-1"></i>{{ modele.longueur }}</span>
+                            {% endif %}
+                            {% if modele.longueurManches %}
+                                <span class="spec-tag"><i class="fas fa-tshirt me-1"></i>{{ modele.longueurManches }}</span>
+                            {% endif %}
+                            {% if modele.formeCol %}
+                                <span class="spec-tag"><i class="fas fa-circle-notch me-1"></i>{{ modele.formeCol }}</span>
+                            {% endif %}
+                        </div>
+
+                        {% if modele.description %}
+                            <p class="item-description">
+                                {{ modele.description|slice(0, 120) }}{% if modele.description|length > 120 %}…{% endif %}
+                            </p>
+                        {% endif %}
+
+                        <div class="item-footer">
+                            <div class="item-price">
+                                {% if modele.prixLocation %}
+                                    <span class="label">Location</span>
+                                    <span class="price">{{ modele.prixLocation|number_format(2, ',', ' ') }} €</span>
+                                {% endif %}
+                            </div>
+                            <a href="{{ path('app_modele_location_show', {'id': modele.id}) }}"
+                               class="btn-rent">
+                                <i class="fas fa-calendar-check me-1"></i>Réserver
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</section>
+
+{# ===== CTA BOTTOM ===== #}
+<div class="collection-cta">
+    <h2>Vous avez une occasion spéciale ?</h2>
+    <p>Notre équipe vous accompagne pour trouver la tenue parfaite, sur mesure ou en location.</p>
+    <a href="#" class="btn-contact">
+        <i class="fas fa-envelope me-2"></i>Nous contacter
+    </a>
+</div>
+
+{% endblock %}

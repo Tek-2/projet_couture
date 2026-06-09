@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail du modèle de location{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fa fa-shirt me-2"></i> Détail du modèle de location
+                    </h4>
+                </div>
+
+                <div class="card-body">
+                    <table class="table table-borderless mb-0">
+                        <tbody>
+                            <tr>
+                                <th class="text-muted w-50">Id</th>
+                                <td>{{ modele_location.id }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Libellé</th>
+                                <td>{{ modele_location.libelle }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Prix Location</th>
+                                <td>{{ modele_location.prixLocation }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Prix Achat</th>
+                                <td>{{ modele_location.prixAchat }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Tissu</th>
+                                <td>{{ modele_location.tissu }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Silhouette</th>
+                                <td>{{ modele_location.silhouette }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Longueur</th>
+                                <td>{{ modele_location.longueur }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Longueur Manches</th>
+                                <td>{{ modele_location.longueurManches }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Forme Col</th>
+                                <td>{{ modele_location.formeCol }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Description</th>
+                                <td>{{ modele_location.description }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card-footer d-flex justify-content-between">
+                    <a class="btn btn-secondary" href="{{ path('app_modele_location_index') }}">
+                        <i class="fa fa-arrow-left"></i> Retour
+                    </a>
+
+                    <div class="d-flex gap-2">
+                        <a class="btn btn-warning" href="{{ path('app_modele_location_edit', {'id': modele_location.id}) }}">
+                            <i class="fa fa-edit"></i> Modifier
+                        </a>
+
+                        {{ include('modele_location/_delete_form.html.twig') }}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

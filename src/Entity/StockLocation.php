@@ -4,10 +4,13 @@ namespace App\Entity;
 
 use App\Repository\StockLocationRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: StockLocationRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['stock:read']]
+)]
 class StockLocation
 {
     #[ORM\Id]
@@ -15,23 +18,29 @@ class StockLocation
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['stock:read', 'modele:read'])]
     #[ORM\Column(length: 255)]
     private ?string $taille = null;
-
+    
+    #[Groups(['stock:read', 'modele:read'])]
     #[ORM\Column]
     private ?int $quantite = null;
 
+    #[Groups(['stock:read', 'modele:read'])]
     #[ORM\Column(length: 255)]
     private ?string $imageVariante = null;
 
+    #[Groups(['stock:read', 'modele:read'])]
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?Couleur $couleur = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['stock:read'])]
+    #[ORM\ManyToOne(inversedBy: "stockLocations")]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?ModeleLocation $modeleLocation = null;
 
+    
     public function getId(): ?int
     {
         return $this->id;

@@ -5,51 +5,77 @@ namespace App\Entity;
 use App\Repository\ModeleLocationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: ModeleLocationRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['modele:read']]
+)]
 class ModeleLocation
 {
+    #[Groups(['stock:read', 'modele:read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['stock:read', 'modele:read'])]
     #[ORM\Column(length: 255)]
     private ?string $libelle = null;
 
+    #[Groups(['stock:read', 'modele:read'])]
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $prixLocation = null;
 
+    #[Groups(['stock:read', 'modele:read'])]
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
     private ?string $prixAchat = null;
 
+    #[Groups(['stock:read', 'modele:read'])]
     #[ORM\Column(length: 255)]
     private ?string $tissu = null;
 
+    #[Groups(['stock:read', 'modele:read'])]
     #[ORM\Column(length: 255)]
     private ?string $silhouette = null;
 
+    #[Groups(['stock:read', 'modele:read'])]
     #[ORM\Column(length: 255)]
     private ?string $longueur = null;
 
+    #[Groups(['stock:read', 'modele:read'])]
     #[ORM\Column(length: 255)]
     private ?string $longueurManches = null;
 
+    #[Groups(['stock:read', 'modele:read'])]
     #[ORM\Column(length: 255)]
     private ?string $formeCol = null;
 
+    #[Groups(['stock:read', 'modele:read'])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[Groups(['stock:read', 'modele:read'])]
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?Entretien $entretien = null;
 
+    #[Groups(['stock:read', 'modele:read'])]
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?TypeLocation $type = null;
+
+    #[ORM\OneToMany(mappedBy: "modeleLocation", targetEntity: StockLocation::class)]
+    #[Groups(["modele:read"])]
+    private Collection $stockLocations;
+
+    public function __construct()
+    {
+        $this->stockLocations = new ArrayCollection();
+    }   
 
     public function getId(): ?int
     {
@@ -187,4 +213,11 @@ class ModeleLocation
 
         return $this;
     }
+
+    public function getStockLocations(): Collection
+    {
+        return $this->stockLocations;
+    }
+    
+
 }
