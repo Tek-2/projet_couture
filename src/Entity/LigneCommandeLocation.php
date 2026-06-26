@@ -18,11 +18,11 @@ class LigneCommandeLocation
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
-    private ?CommandeLocation $id_commandeloc = null;
+    private ?CommandeLocation $commandeloc = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
-    private ?StockLocation $id_stockloc = null;
+    private ?StockLocation $stockloc = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $prix = null;
@@ -35,26 +35,26 @@ class LigneCommandeLocation
         return $this->id;
     }
 
-    public function getIdCommandeloc(): ?CommandeLocation
+    public function getCommandeloc(): ?CommandeLocation
     {
-        return $this->id_commandeloc;
+        return $this->commandeloc;
     }
 
-    public function setIdCommandeloc(?CommandeLocation $id_commandeloc): static
+    public function setCommandeloc(?CommandeLocation $id_commandeloc): static
     {
-        $this->id_commandeloc = $id_commandeloc;
+        $this->commandeloc = $id_commandeloc;
 
         return $this;
     }
 
-    public function getIdStockloc(): ?StockLocation
+    public function getStockloc(): ?StockLocation
     {
-        return $this->id_stockloc;
+        return $this->stockloc;
     }
 
-    public function setIdStockloc(?StockLocation $id_stockloc): static
+    public function setStockloc(?StockLocation $id_stockloc): static
     {
-        $this->id_stockloc = $id_stockloc;
+        $this->stockloc = $id_stockloc;
 
         return $this;
     }

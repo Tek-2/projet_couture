@@ -21,7 +21,6 @@ class CommandeLocationType extends AbstractType
             ->add('date_fin_loc', null, [
                 'widget' => 'single_text',
             ])
-            ->add('location')
             ->add('statut')
             ->add('montant_total')
         ;

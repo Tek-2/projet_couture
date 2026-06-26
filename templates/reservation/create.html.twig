@@ -1,0 +1,48 @@
+{# ==============================
+   FORMULAIRE DE RÉSERVATION
+   ============================== #}
+
+<h1>Réserver un créneau</h1>
+
+<form method="POST">
+
+    {# ======================
+       CRÉNEAU
+       ====================== #}
+    <label>Date début :</label>
+    <input type="datetime-local" name="date_debut" required>
+
+    <label>Date fin (optionnel) :</label>
+    <input type="datetime-local" name="date_fin">
+
+
+    {# ======================
+       MODELES (OPTIONNEL)
+       ====================== #}
+    <h2>Choisir des modèles (optionnel)</h2>
+
+    {% for stock in stocks %}
+
+        <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px">
+
+            <label>
+                <input type="checkbox" name="stocks[]" value="{{ stock.id }}">
+
+                {{ stock.modeleLocation.libelle }}
+                - Taille {{ stock.taille }}
+                - Couleur {{ stock.couleur.nomCouleur }}
+            </label>
+
+        </div>
+
+    {% endfor %}
+
+
+    {# ======================
+       SUBMIT
+       ====================== #}
+    <button type="submit">
+        Envoyer la demande
+    </button>
+
+</form>

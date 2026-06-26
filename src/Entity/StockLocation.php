@@ -6,6 +6,8 @@ use App\Repository\StockLocationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Metadata\ApiResource;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: StockLocationRepository::class)]
 #[ApiResource(
@@ -13,6 +15,7 @@ use ApiPlatform\Metadata\ApiResource;
 )]
 class StockLocation
 {
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -25,10 +28,6 @@ class StockLocation
     #[Groups(['stock:read', 'modele:read'])]
     #[ORM\Column]
     private ?int $quantite = null;
-
-    #[Groups(['stock:read', 'modele:read'])]
-    #[ORM\Column(length: 255)]
-    private ?string $imageVariante = null;
 
     #[Groups(['stock:read', 'modele:read'])]
     #[ORM\ManyToOne]
@@ -70,17 +69,17 @@ class StockLocation
         return $this;
     }
 
-    public function getImageVariante(): ?string
-    {
-        return $this->imageVariante;
-    }
+    //public function getImageVariante(): ?string
+    //{
+    //    return $this->imageVariante;
+    //}
 
-    public function setImageVariante(string $imageVariante): static
-    {
-        $this->imageVariante = $imageVariante;
+    //public function setImageVariante(string $imageVariante): static
+    //{
+    //    $this->imageVariante = $imageVariante;
+    //    return $this;
+    //}
 
-        return $this;
-    }
 
     public function getCouleur(): ?Couleur
     {

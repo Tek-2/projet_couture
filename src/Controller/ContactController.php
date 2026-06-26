@@ -30,6 +30,8 @@ final class ContactController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $contact->setIdUser($this->getUser());
+            $contact->setDate(new \DateTime());
             $entityManager->persist($contact);
             $entityManager->flush();
 

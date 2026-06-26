@@ -1,4 +1,5 @@
 <?php
+// a faire : supprimer la gestion de prixAchat 
 
 namespace App\Controller;
 

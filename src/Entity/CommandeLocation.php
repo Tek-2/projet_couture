@@ -25,18 +25,23 @@ class CommandeLocation
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $date_fin_loc = null;
 
-    #[ORM\Column]
-    private ?bool $location = null;
+     // IMPORTANT : workflow simplifié réservation
+    #[ORM\Column(length: 50)]
+    private string $statut = 'en_attente';
+    // en_attente | valide | refuse
 
-    #[ORM\Column(length: 255)]
-    private ?string $statut = null;
-
-    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[ORM\Column(nullable: true, type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $montant_total = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
-    private ?User $id_user = null;
+    private ?User $user = null;
+
+
+    public function __construct()
+    {
+        $this->date_commande = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
@@ -79,18 +84,6 @@ class CommandeLocation
         return $this;
     }
 
-    public function isLocation(): ?bool
-    {
-        return $this->location;
-    }
-
-    public function setLocation(bool $location): static
-    {
-        $this->location = $location;
-
-        return $this;
-    }
-
     public function getStatut(): ?string
     {
         return $this->statut;
@@ -115,14 +108,14 @@ class CommandeLocation
         return $this;
     }
 
-    public function getIdUser(): ?User
+    public function getUser(): ?User
     {
-        return $this->id_user;
+        return $this->user;
     }
 
-    public function setIdUser(?User $id_user): static
+    public function setUser(?User $id_user): static
     {
-        $this->id_user = $id_user;
+        $this->user = $id_user;
 
         return $this;
     }

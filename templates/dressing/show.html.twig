@@ -1,82 +1,97 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Détail du modèle de location{% endblock %}
+{% block title %}{{ modele_location.libelle }}{% endblock %}
 
 {% block body %}
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
 
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">
-                        <i class="fa fa-shirt me-2"></i> Détail du modèle de location
-                    </h4>
-                </div>
+<div class="container py-5">
 
-                <div class="card-body">
-                    <table class="table table-borderless mb-0">
-                        <tbody>
-                            <tr>
-                                <th class="text-muted w-50">Id</th>
-                                <td>{{ modele_location.id }}</td>
-                            </tr>
-                            <tr>
-                                <th class="text-muted">Libellé</th>
-                                <td>{{ modele_location.libelle }}</td>
-                            </tr>
-                            <tr>
-                                <th class="text-muted">Prix Location</th>
-                                <td>{{ modele_location.prixLocation }}</td>
-                            </tr>
-                            <tr>
-                                <th class="text-muted">Prix Achat</th>
-                                <td>{{ modele_location.prixAchat }}</td>
-                            </tr>
-                            <tr>
-                                <th class="text-muted">Tissu</th>
-                                <td>{{ modele_location.tissu }}</td>
-                            </tr>
-                            <tr>
-                                <th class="text-muted">Silhouette</th>
-                                <td>{{ modele_location.silhouette }}</td>
-                            </tr>
-                            <tr>
-                                <th class="text-muted">Longueur</th>
-                                <td>{{ modele_location.longueur }}</td>
-                            </tr>
-                            <tr>
-                                <th class="text-muted">Longueur Manches</th>
-                                <td>{{ modele_location.longueurManches }}</td>
-                            </tr>
-                            <tr>
-                                <th class="text-muted">Forme Col</th>
-                                <td>{{ modele_location.formeCol }}</td>
-                            </tr>
-                            <tr>
-                                <th class="text-muted">Description</th>
-                                <td>{{ modele_location.description }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+    <div class="row">
 
-                <div class="card-footer d-flex justify-content-between">
-                    <a class="btn btn-secondary" href="{{ path('app_modele_location_index') }}">
-                        <i class="fa fa-arrow-left"></i> Retour
-                    </a>
+        {# ================= GALERIE ================= #}
+        <div class="col-md-6">
 
-                    <div class="d-flex gap-2">
-                        <a class="btn btn-warning" href="{{ path('app_modele_location_edit', {'id': modele_location.id}) }}">
-                            <i class="fa fa-edit"></i> Modifier
-                        </a>
+            {% set mainPhoto = main_photo %}
 
-                        {{ include('modele_location/_delete_form.html.twig') }}
-                    </div>
-                </div>
+            <img
+                id="mainImage"
+                class="img-fluid rounded shadow mb-3"
+                src="{{ mainPhoto ? mainPhoto.url : asset('images/no-image.jpg') }}"
+            >
+
+            <div class="d-flex gap-2">
+
+                {% for photo in photos %}
+                    <img
+                        src="{{ photo.url }}"
+                        class="img-thumbnail"
+                        style="width:80px; cursor:pointer;"
+                        onclick="document.getElementById('mainImage').src=this.src"
+                    >
+                {% endfor %}
+
             </div>
 
         </div>
+
+        {# ================= INFOS ================= #}
+        <div class="col-md-6">
+
+            <h1>{{ modele_location.libelle }}</h1>
+
+            <h3 class="text-primary">
+                {{ modele_location.prixLocation }} €
+            </h3>
+
+            <p>{{ modele_location.description }}</p>
+
+            <hr>
+
+            {# ================= COULEURS ================= #}
+            <h5>Couleur</h5>
+
+            <div class="d-flex gap-2 flex-wrap">
+
+                {% for couleur in couleurs %}
+                    <button class="btn btn-outline-dark btn-couleur"
+                            data-id="{{ couleur.id }}">
+
+                        <img src="{{ couleur.image }}" width="20">
+                        {{ couleur.nom }}
+
+                    </button>
+                {% endfor %}
+
+            </div>
+
+            {# ================= TAILLES ================= #}
+            <h5 class="mt-3">Taille</h5>
+
+            <div class="d-flex gap-2 flex-wrap">
+
+                {% for taille in tailles %}
+                    <button class="btn btn-outline-secondary btn-taille">
+                        {{ taille }}
+                    </button>
+                {% endfor %}
+
+            </div>
+
+            {# ================= STOCK ================= #}
+            <div class="mt-4">
+                <div id="stockInfo" class="alert alert-secondary">
+                    Sélectionnez une couleur et une taille
+                </div>
+
+            </div>
+
+            <button id="btnLouer" class="btn btn-primary w-100 mt-3" disabled>
+                Louer ce modèle
+            </button>
+
+        </div>
+
     </div>
+
 </div>
 {% endblock %}

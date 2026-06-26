@@ -28,7 +28,7 @@ class Contact
     private ?\DateTime $date = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
+    #[ORM\JoinColumn(nullable: true, onDelete: "CASCADE")] // a rechanger nullable false
     private ?User $id_user = null;
 
     public function getId(): ?int

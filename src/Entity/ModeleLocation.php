@@ -31,10 +31,6 @@ class ModeleLocation
     private ?string $prixLocation = null;
 
     #[Groups(['stock:read', 'modele:read'])]
-    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
-    private ?string $prixAchat = null;
-
-    #[Groups(['stock:read', 'modele:read'])]
     #[ORM\Column(length: 255)]
     private ?string $tissu = null;
 
@@ -72,9 +68,17 @@ class ModeleLocation
     #[Groups(["modele:read"])]
     private Collection $stockLocations;
 
+    #[Groups(['stock:read', 'modele:read'])]
+    //#[ORM\Column(length: 255)]
+    //private ?string $imageVariante = null;
+    #[ORM\OneToMany(mappedBy: 'modeleLocation', targetEntity: StockLocationImage::class)]
+    private Collection $stockLocationImages;
+
+
     public function __construct()
     {
         $this->stockLocations = new ArrayCollection();
+        $this->stockLocationImages = new ArrayCollection();
     }   
 
     public function getId(): ?int
@@ -102,18 +106,6 @@ class ModeleLocation
     public function setPrixLocation(string $prixLocation): static
     {
         $this->prixLocation = $prixLocation;
-
-        return $this;
-    }
-
-    public function getPrixAchat(): ?string
-    {
-        return $this->prixAchat;
-    }
-
-    public function setPrixAchat(?string $prixAchat): static
-    {
-        $this->prixAchat = $prixAchat;
 
         return $this;
     }
@@ -219,5 +211,11 @@ class ModeleLocation
         return $this->stockLocations;
     }
     
+
+    public function getStockLocationImages(): Collection
+    {
+        return $this->stockLocationImages;
+    }
+
 
 }

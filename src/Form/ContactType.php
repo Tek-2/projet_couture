@@ -14,7 +14,6 @@ class ContactType extends AbstractType
         $builder
             ->add('sujet')
             ->add('message')
-            ->add('date')
         ;
     }
 

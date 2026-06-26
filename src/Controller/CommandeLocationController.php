@@ -1,4 +1,5 @@
 <?php
+// a faire : adapter la création de commande - a modiified version of the CommandeLocationController.php file that includes the necessary changes to remove the 'location' field from the CommandeLocation entity and form type. The changes also ensure that the controller methods handle the updated entity correctly.
 
 namespace App\Controller;
 

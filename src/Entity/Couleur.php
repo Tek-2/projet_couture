@@ -45,12 +45,12 @@ class Couleur
         return $this;
     }
 
-    public function getImage(): ?string
+    public function getImageCouleur(): ?string
     {
         return $this->image;
     }
 
-    public function setImage(string $image): static
+    public function setImageCouleur(string $image): static
     {
         $this->image = $image;
 

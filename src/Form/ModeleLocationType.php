@@ -17,7 +17,6 @@ class ModeleLocationType extends AbstractType
         $builder
             ->add('libelle')
             ->add('prixLocation')
-            ->add('prixAchat')
             ->add('tissu')
             ->add('silhouette')
             ->add('longueur')
