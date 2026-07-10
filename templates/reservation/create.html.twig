@@ -1,48 +1,110 @@
-{# ==============================
-   FORMULAIRE DE RÉSERVATION
-   ============================== #}
+{% extends 'base.html.twig' %}
 
-<h1>Réserver un créneau</h1>
+{% block title %}Créer une réservation{% endblock %}
 
-<form method="POST">
+{% block body %}
 
-    {# ======================
-       CRÉNEAU
-       ====================== #}
-    <label>Date début :</label>
-    <input type="datetime-local" name="date_debut" required>
+<div class="container py-5">
 
-    <label>Date fin (optionnel) :</label>
-    <input type="datetime-local" name="date_fin">
+    <h1 class="mb-4">Choisir vos créneaux d'essayage</h1>
 
+    <form method="POST">
 
-    {# ======================
-       MODELES (OPTIONNEL)
-       ====================== #}
-    <h2>Choisir des modèles (optionnel)</h2>
+        <div id="dates-container"></div>
 
-    {% for stock in stocks %}
+        <button type="button" id="add-date" class="btn btn-outline-dark mt-3">
+            + Ajouter une date
+        </button>
 
-        <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px">
+        <hr>
 
-            <label>
-                <input type="checkbox" name="stocks[]" value="{{ stock.id }}">
+        <div class="mt-4">
+            <label>Commentaire</label>
+            <textarea name="commentaire" class="form-control"></textarea>
+        </div>
 
-                {{ stock.modeleLocation.libelle }}
-                - Taille {{ stock.taille }}
-                - Couleur {{ stock.couleur.nomCouleur }}
-            </label>
+        <button type="submit" class="btn btn-primary mt-4">
+            Envoyer la demande
+        </button>
+
+    </form>
+
+</div>
+
+<script>
+const slots = [
+    "09:00","09:30","10:00","10:30",
+    "11:00","11:30","12:00","12:30",
+    "13:00","13:30","14:00","14:30",
+    "15:00","15:30","16:00","16:30"
+];
+
+const container = document.getElementById('dates-container');
+const addBtn = document.getElementById('add-date');
+
+function createDateBlock() {
+
+    const wrapper = document.createElement('div');
+    wrapper.classList.add('border', 'p-3', 'mb-3', 'rounded');
+
+    const dateId = 'date_' + Date.now() + '_' + Math.random();
+
+    wrapper.innerHTML = `
+        <div class="d-flex justify-content-between align-items-center mb-2">
+
+            <input type="date"
+                   class="form-control w-50 date-input"
+                   required>
+
+            <button type="button" class="btn btn-danger btn-sm remove-date">
+                Supprimer
+            </button>
 
         </div>
 
-    {% endfor %}
+        <div class="slots mt-2"></div>
+    `;
 
+    const dateInput = wrapper.querySelector('.date-input');
+    const slotsContainer = wrapper.querySelector('.slots');
 
-    {# ======================
-       SUBMIT
-       ====================== #}
-    <button type="submit">
-        Envoyer la demande
-    </button>
+    dateInput.addEventListener('change', () => {
 
-</form>
+        const date = dateInput.value;
+
+        if (!date) return;
+
+        let html = `<div class="row">`;
+
+        slots.forEach(slot => {
+            html += `
+                <div class="col-3 mb-1">
+                    <label class="small">
+                        <input type="checkbox"
+                               name="creneaux_client[${date}][]"
+                               value="${slot}">
+                        ${slot}
+                    </label>
+                </div>
+            `;
+        });
+
+        html += `</div>`;
+
+        slotsContainer.innerHTML = html;
+    });
+
+    wrapper.querySelector('.remove-date').addEventListener('click', () => {
+        wrapper.remove();
+    });
+
+    container.appendChild(wrapper);
+}
+
+addBtn.addEventListener('click', createDateBlock);
+
+// 1 bloc par défaut
+createDateBlock();
+</script>
+
+{% endblock %}

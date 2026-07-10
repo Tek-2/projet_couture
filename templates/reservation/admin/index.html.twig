@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Demandes de rendez-vous{% endblock %}
+
+{% block body %}
+
+<h1>Demandes de rendez-vous</h1>
+
+<table border="1" cellpadding="8">
+    <tr>
+        <th>ID</th>
+        <th>Client</th>
+        <th>Statut</th>
+        <th></th>
+    </tr>
+
+    {% for reservation in reservations %}
+        <tr>
+            <td>{{ reservation.id }}</td>
+
+            <td>
+                {{ reservation.user.prenom }} {{ reservation.user.nom }}
+            </td>
+
+            <td>{{ reservation.statut }}</td>
+
+            <td>
+                <a href="{{ path('admin_reservation_show', {id: reservation.id}) }}">
+                    Voir
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

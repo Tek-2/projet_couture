@@ -1,0 +1,147 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réservation{% endblock %}
+
+{% block body %}
+
+<h1>Réservation n°{{ reservation.id }}</h1>
+
+<hr>
+
+{% if reservation.dateDebutValidee %}
+
+<div class="alert alert-success">
+
+    <h5>Rendez-vous validé</h5>
+
+    Le rendez-vous a été validé pour le
+    <strong>{{ reservation.dateDebutValidee|date('d/m/Y') }}</strong>
+    à
+    <strong>{{ reservation.dateDebutValidee|date('H\\hi') }}</strong>.
+
+</div>
+
+
+{% else %}
+
+    {# formulaire de validation #}
+
+{% endif %}
+
+<h3>Client</h3>
+
+<p>
+{{ reservation.user.prenom }} {{ reservation.user.nom }}<br>
+{{ reservation.user.email }}<br>
+{{ reservation.user.tel }}
+</p>
+
+{# a supprimer par la suite #}
+<hr>
+
+<h3>Statut : {{ reservation.statut }}</h3>
+
+
+<hr>
+
+<h3>Créneaux proposés par la cliente</h3>
+
+<form method="post"
+      action="{{ path('admin_reservation_valider_client', {id: reservation.id}) }}">
+
+{% for date, slots in reservation.creneauxClient %}
+
+    <div class="mb-4">
+
+        <strong>{{ date }}</strong>
+
+        {% for slot in slots %}
+
+            <div class="form-check">
+
+                <input
+                    class="form-check-input"
+                    type="radio"
+                    name="creneau"
+                    value="{{ date }}|{{ slot }}"
+                    id="c{{ loop.parent.loop.index }}{{ loop.index }}"
+                    required>
+
+                <label
+                    class="form-check-label"
+                    for="c{{ loop.parent.loop.index }}{{ loop.index }}">
+
+                    {{ slot }}
+
+                </label>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% endfor %}
+
+<button class="btn btn-success">
+    Valider ce créneau
+</button>
+
+</form>
+
+<hr>
+
+<h3>Refuser les créneaux proposés et proposer un autre rendez-vous</h3>
+
+<form method="post"
+      action="{{ path('admin_reservation_proposer', {id: reservation.id}) }}">
+
+    <div class="mb-3">
+
+        <label for="date">
+            Nouvelle date
+        </label>
+
+        <input
+            type="date"
+            id="date"
+            name="date"
+            class="form-control"
+            required>
+
+    </div>
+
+
+    <div class="mb-3">
+
+        <label for="time">
+            Nouvelle heure
+        </label>
+
+        <input
+            type="time"
+            id="time"
+            name="time"
+            class="form-control"
+            step="300"
+            required>
+
+    </div>
+
+
+    <button class="btn btn-warning">
+
+        Refuser les créneaux et proposer ce rendez-vous
+
+    </button>
+
+
+</form>
+<hr>
+
+
+<form method="post" action="{{ path('admin_reservation_refuser', {id: reservation.id}) }}">
+    <button class="btn btn-danger">Refuser (annuler)</button>
+</form>
+
+{% endblock %}

@@ -1,0 +1,174 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Mes réservations
+{% endblock %}
+
+
+{% block body %}
+
+<div class="container py-5">
+
+    <h1>
+        Mes réservations
+    </h1>
+
+    <hr>
+
+
+    {% if reservations is empty %}
+
+        <div class="alert alert-info">
+            Vous n'avez aucune réservation en cours.
+        </div>
+
+
+    {% else %}
+
+
+        <div class="row">
+
+
+            {% for reservation in reservations %}
+
+
+                <div class="col-md-6 mb-4">
+
+
+                    <div class="card shadow">
+
+
+                        <div class="card-body">
+
+
+                            <h5 class="card-title">
+
+                                Réservation n°{{ reservation.id }}
+
+                            </h5>
+
+
+
+                            <p>
+
+                                Demande effectuée le :
+
+                                <strong>
+                                    {{ reservation.dateCommande|date('d/m/Y H:i') }}
+                                </strong>
+
+                            </p>
+
+
+
+                            <p>
+
+                                Statut :
+
+                                {% if reservation.statut == 'valide' %}
+
+                                    <span class="badge bg-success">
+                                        Validée
+                                    </span>
+
+
+                                {% elseif reservation.statut == 'proposition' %}
+
+                                    <span class="badge bg-warning">
+                                        Proposition en attente
+                                    </span>
+
+
+                                {% elseif reservation.statut == 'refuse_client' %}
+
+                                    <span class="badge bg-danger">
+                                        Refusée
+                                    </span>
+
+
+                                {% elseif reservation.statut == 'annule' %}
+
+                                    <span class="badge bg-danger">
+                                        Annulée
+                                    </span>
+
+
+                                {% else %}
+
+                                    <span class="badge bg-secondary">
+                                        En attente
+                                    </span>
+
+
+                                {% endif %}
+
+
+                            </p>
+
+
+
+                            {% if reservation.dateDebutValidee %}
+
+                                <p>
+
+                                    Rendez-vous :
+
+                                    <strong>
+                                        {{ reservation.dateDebutValidee|date('d/m/Y à H:i') }}
+                                    </strong>
+
+                                </p>
+
+
+                            {% endif %}
+
+
+
+                            {% if reservation.propositionDebut %}
+
+                                <p class="text-primary">
+
+                                    Nouveau créneau proposé :
+
+                                    <strong>
+                                        {{ reservation.propositionDebut|date('d/m/Y à H:i') }}
+                                    </strong>
+
+                                </p>
+
+
+                            {% endif %}
+
+
+
+
+                            <a
+                                href="{{ path('app_user_reservation_show', {id: reservation.id}) }}"
+                                class="btn btn-primary">
+
+                                Voir la réservation
+
+                            </a>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            {% endfor %}
+
+
+        </div>
+
+
+    {% endif %}
+
+
+</div>
+
+{% endblock %}

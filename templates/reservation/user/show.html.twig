@@ -1,0 +1,362 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Ma réservation
+{% endblock %}
+
+
+{% block body %}
+
+<div class="container py-5">
+
+    <h1>
+        Ma réservation n°{{ reservation.id }}
+    </h1>
+
+
+    <hr>
+
+
+    {# ==========================
+       INFORMATIONS RESERVATION
+       ========================== #}
+
+    <h3>Informations</h3>
+
+    <p>
+        Date de demande :
+        <strong>
+            {{ reservation.dateCommande|date('d/m/Y H:i') }}
+        </strong>
+    </p>
+
+
+    <p>
+        Statut :
+
+        {% if reservation.statut == 'valide' %}
+
+            <span class="badge bg-success">
+                Validé
+            </span>
+
+        {% elseif reservation.statut == 'proposition' %}
+
+            <span class="badge bg-warning">
+                Proposition en attente
+            </span>
+
+        {% elseif reservation.statut == 'refuse_client' %}
+
+            <span class="badge bg-danger">
+                Refusé
+            </span>
+
+        {% else %}
+
+            <span class="badge bg-secondary">
+                En attente
+            </span>
+
+        {% endif %}
+
+    </p>
+
+
+
+    <hr>
+
+
+
+    {# ==========================
+       RENDEZ-VOUS VALIDE
+       ========================== #}
+
+    {% if reservation.dateDebutValidee %}
+
+        <div class="alert alert-success">
+
+            <h4>
+                Rendez-vous confirmé
+            </h4>
+
+            <p class="mb-0">
+
+                Votre rendez-vous a été validé pour le :
+
+                <strong>
+                    {{ reservation.dateDebutValidee|date('d/m/Y') }}
+                </strong>
+
+                à
+
+                <strong>
+                    {{ reservation.dateDebutValidee|date('H\\hi') }}
+                </strong>
+
+            </p>
+
+        </div>
+
+
+    {% endif %}
+
+
+
+    {# ==========================
+       PROPOSITION ADMIN
+       ========================== #}
+
+    {% if reservation.statut == 'proposition' %}
+
+        <div class="alert alert-info">
+
+            <h4>
+                Nouveau créneau proposé
+            </h4>
+
+
+            <p>
+
+                Nous vous proposons le rendez-vous suivant :
+
+            </p>
+
+
+            <p>
+
+                <strong>
+                    {{ reservation.propositionDebut|date('d/m/Y') }}
+                </strong>
+
+                à
+
+                <strong>
+                    {{ reservation.propositionDebut|date('H\\hi') }}
+                </strong>
+
+
+            </p>
+
+
+
+            <div class="d-flex gap-3">
+
+
+                <form method="post"
+                      action="{{ path('reservation_accepter', {id: reservation.id}) }}">
+
+                    <button class="btn btn-success">
+
+                        Accepter ce créneau
+
+                    </button>
+
+                </form>
+
+
+
+                <form method="post"
+                      action="{{ path('reservation_refuser', {id: reservation.id}) }}">
+
+                    <button class="btn btn-danger">
+
+                        Refuser ce créneau
+
+                    </button>
+
+                </form>
+
+
+            </div>
+
+
+        </div>
+
+
+    {% endif %}
+
+
+
+    <hr>
+
+
+
+    {# ==========================
+       CRENEAUX PROPOSES CLIENT
+       ========================== #}
+
+    <h3>
+        Vos créneaux proposés
+    </h3>
+
+
+    {% if reservation.creneauxClient %}
+
+
+        {% for date, slots in reservation.creneauxClient %}
+
+
+            <div class="card mb-3">
+
+
+                <div class="card-header">
+
+                    {{ date }}
+
+                </div>
+
+
+                <div class="card-body">
+
+
+                    {% for slot in slots %}
+
+                        <span class="badge bg-secondary me-2">
+
+                            {{ slot }}
+
+                        </span>
+
+
+                    {% endfor %}
+
+
+                </div>
+
+
+            </div>
+
+
+        {% endfor %}
+
+
+    {% else %}
+
+
+        <p>
+            Aucun créneau proposé.
+        </p>
+
+
+    {% endif %}
+
+
+
+    {% if reservation.commentaire %}
+
+        <hr>
+
+        <h3>
+            Commentaire
+        </h3>
+
+
+        <p>
+            {{ reservation.commentaire }}
+        </p>
+
+
+    {% endif %}
+
+
+
+</div>
+
+
+{# ==========================
+   MODELES A ESSAYER
+   ========================== #}
+
+<hr>
+
+<h3>
+    Modèles sélectionnés pour l'essayage
+</h3>
+
+
+{% if lignes is not empty %}
+
+    <div class="row">
+
+
+        {% for ligne in lignes %}
+
+
+            <div class="col-md-4 mb-3">
+
+
+                <div class="card shadow">
+
+
+                    <div class="card-body">
+
+
+                        <h5 class="card-title">
+
+                            {{ ligne.stockloc.modeleLocation.libelle }}
+
+                        </h5>
+
+
+                        <p>
+                            Taille :
+
+                            <strong>
+                                {{ ligne.stockloc.taille }}
+                            </strong>
+                        </p>
+
+
+
+                        {% if ligne.stockloc.couleur %}
+
+                            <p>
+
+                                Couleur :
+
+                                <strong>
+                                    {{ ligne.stockloc.couleur.nomCouleur }}
+                                </strong>
+
+                            </p>
+
+                        {% endif %}
+
+
+
+                        <p>
+
+                            Prix location :
+
+                            <strong>
+                                {{ ligne.prix }} €
+                            </strong>
+
+                        </p>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        {% endfor %}
+
+
+    </div>
+
+
+{% else %}
+
+    <p>
+        Aucun modèle sélectionné pour l'essayage.
+    </p>
+
+{% endif %}
+
+{% endblock %}

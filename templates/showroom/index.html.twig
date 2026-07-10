@@ -1,0 +1,145 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Showroom{% endblock %}
+
+{% block body %}
+
+<div class="container py-5">
+
+    <h1 class="mb-4">Mon Showroom</h1>
+
+    {# =========================
+       CAS VIDE
+       ========================= #}
+    {% if stocks is empty %}
+
+        <div class="alert alert-secondary">
+            Votre showroom est vide.
+        </div>
+
+        <a href="{{ path('app_dressing_index') }}" class="btn btn-outline-dark">
+            Découvrir les modèles
+        </a>
+
+        <a href="{{ path('app_reservation_create') }}" class="btn btn-primary">
+            Venir sans sélection
+        </a>
+
+    {% else %}
+
+        {# =========================
+           COMPTEUR
+           ========================= #}
+        <div class="mb-4">
+            <span class="badge bg-dark">
+                {{ stocks|length }} article(s) sélectionné(s)
+            </span>
+        </div>
+
+        {# =========================
+           GROUPER PAR MODELE
+           ========================= #}
+        {% set grouped = {} %}
+
+        {% for stock in stocks %}
+            {% set modele = stock.modeleLocation.libelle %}
+
+            {% if grouped[modele] is not defined %}
+                {% set grouped = grouped|merge({ (modele): [] }) %}
+            {% endif %}
+
+            {% set grouped = grouped|merge({
+                (modele): grouped[modele]|merge([stock])
+            }) %}
+        {% endfor %}
+
+        {# =========================
+           AFFICHAGE GROUPÉ
+           ========================= #}
+        {% for modeleName, items in grouped %}
+
+            <div class="card mb-4 shadow-sm">
+
+                <div class="card-header bg-light">
+                    <strong>{{ modeleName }}</strong>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row">
+
+                        {% for stock in items %}
+
+                            <div class="col-md-6 mb-3">
+
+                                <div class="border rounded p-3 d-flex justify-content-between align-items-center">
+
+                                    <div>
+
+                                        <div>
+                                            <strong>Taille :</strong> {{ stock.taille }}
+                                        </div>
+
+                                        <div>
+                                            <strong>Couleur :</strong>
+                                            {{ stock.couleur.nomCouleur }}
+                                        </div>
+
+                                        <div>
+                                            <small class="text-muted">
+                                                Stock : {{ stock.quantite }}
+                                            </small>
+                                        </div>
+
+                                    </div>
+
+                                    <a href="{{ path('app_dressing_show', {id: stock.modeleLocation.id}) }}"
+                                    class="btn btn-sm btn-outline-dark mt-2" style="color:black">
+                                        Voir le modèle
+                                    </a>
+
+                                    <a href="{{ path('app_showroom_remove', {id: stock.id}) }}"
+                                       class="btn btn-sm btn-outline-danger" style="color:red">
+                                        Supprimer
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+        {# =========================
+            ACTIONS
+        ========================= #}
+            <div class="d-flex gap-2 mt-4">
+
+                <a href="{{ path('app_reservation_create') }}" class="btn btn-primary">
+                    Choisir un créneau
+                </a>
+
+                <a href="{{ path('app_dressing_index') }}"
+                class="btn btn-dark">
+                    Ajouter d'autres modèles
+                </a>
+
+                <a href="{{ path('app_showroom_clear') }}"
+                class="btn btn-outline-danger" style="color:red">
+                    Vider le showroom
+                </a>
+
+            </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -16,107 +16,74 @@ class CommandeLocation
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
+    #[ORM\Column(length: 50)]
+    private string $statut = 'en_attente';
+
     #[ORM\Column]
     private ?\DateTimeImmutable $date_commande = null;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $date_debut_loc = null;
+    // Créneaux proposés par le client
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $creneaux_client = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $commentaire = null;
+
+    // Créneau choisi par admin (unique)
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $proposition_debut = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $date_fin_loc = null;
+    private ?\DateTimeImmutable $proposition_fin = null;
 
-     // IMPORTANT : workflow simplifié réservation
-    #[ORM\Column(length: 50)]
-    private string $statut = 'en_attente';
-    // en_attente | valide | refuse
+    // Créneau validé final
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $date_debut_validee = null;
 
-    #[ORM\Column(nullable: true, type: Types::DECIMAL, precision: 10, scale: 2)]
-    private ?string $montant_total = null;
-
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
-    private ?User $user = null;
-
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $date_fin_validee = null;
 
     public function __construct()
     {
         $this->date_commande = new \DateTimeImmutable();
     }
 
-    public function getId(): ?int
+    public function estValide(): bool
     {
-        return $this->id;
+        return $this->statut === 'valide';
     }
 
-    public function getDateCommande(): ?\DateTimeImmutable
-    {
-        return $this->date_commande;
-    }
+    // ================= GETTERS / SETTERS =================
 
-    public function setDateCommande(\DateTimeImmutable $date_commande): static
-    {
-        $this->date_commande = $date_commande;
+    public function getId(): ?int { return $this->id; }
 
-        return $this;
-    }
+    public function getUser(): ?User { return $this->user; }
+    public function setUser(?User $user): self { $this->user = $user; return $this; }
 
-    public function getDateDebutLoc(): ?\DateTimeImmutable
-    {
-        return $this->date_debut_loc;
-    }
+    public function getStatut(): string { return $this->statut; }
+    public function setStatut(string $statut): self { $this->statut = $statut; return $this; }
 
-    public function setDateDebutLoc(\DateTimeImmutable $date_debut_loc): static
-    {
-        $this->date_debut_loc = $date_debut_loc;
+    public function getDateCommande(): ?\DateTimeImmutable { return $this->date_commande; }
 
-        return $this;
-    }
+    public function getCommentaire(): ?string { return $this->commentaire; }
+    public function setCommentaire(?string $c): self { $this->commentaire = $c; return $this; }
 
-    public function getDateFinLoc(): ?\DateTimeImmutable
-    {
-        return $this->date_fin_loc;
-    }
+    public function getCreneauxClient(): ?array { return $this->creneaux_client; }
+    public function setCreneauxClient(?array $c): self { $this->creneaux_client = $c; return $this; }
 
-    public function setDateFinLoc(?\DateTimeImmutable $date_fin_loc): static
-    {
-        $this->date_fin_loc = $date_fin_loc;
+    public function getPropositionDebut(): ?\DateTimeImmutable { return $this->proposition_debut; }
+    public function setPropositionDebut(?\DateTimeImmutable $d): self { $this->proposition_debut = $d; return $this; }
 
-        return $this;
-    }
+    public function getPropositionFin(): ?\DateTimeImmutable { return $this->proposition_fin; }
+    public function setPropositionFin(?\DateTimeImmutable $d): self { $this->proposition_fin = $d; return $this; }
 
-    public function getStatut(): ?string
-    {
-        return $this->statut;
-    }
+    public function getDateDebutValidee(): ?\DateTimeImmutable { return $this->date_debut_validee; }
+    public function setDateDebutValidee(?\DateTimeImmutable $d): self { $this->date_debut_validee = $d; return $this; }
 
-    public function setStatut(string $statut): static
-    {
-        $this->statut = $statut;
-
-        return $this;
-    }
-
-    public function getMontantTotal(): ?string
-    {
-        return $this->montant_total;
-    }
-
-    public function setMontantTotal(string $montant_total): static
-    {
-        $this->montant_total = $montant_total;
-
-        return $this;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $id_user): static
-    {
-        $this->user = $id_user;
-
-        return $this;
-    }
+    public function getDateFinValidee(): ?\DateTimeImmutable { return $this->date_fin_validee; }
+    public function setDateFinValidee(?\DateTimeImmutable $d): self { $this->date_fin_validee = $d; return $this; }
 }

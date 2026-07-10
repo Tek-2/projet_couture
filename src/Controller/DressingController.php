@@ -2,20 +2,23 @@
 
 namespace App\Controller;
 
+use App\Entity\CommandeLocation;
 use App\Repository\ModeleLocationRepository;
+use App\Repository\StockLocationRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
-use App\Entity\CommandeLocation;
 use App\Entity\LigneCommandeLocation;
-use App\Repository\StockLocationRepository;
-
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 #[Route('/dressing')]
 final class DressingController extends AbstractController
 {
+    // =========================
+    // LISTE DES MODÈLES
+    // =========================
     #[Route('', name: 'app_dressing_index', methods: ['GET'])]
     public function index(ModeleLocationRepository $modeleLocationRepository): Response
     {
@@ -24,132 +27,191 @@ final class DressingController extends AbstractController
         ]);
     }
 
-#[Route('/{id}', name: 'app_dressing_show', methods: ['GET'])]
-public function show(ModeleLocationRepository $modeleLocationRepository, int $id): Response
-{
-    $modeleLocation = $modeleLocationRepository->find($id);
+    // =========================
+    // FICHE MODÈLE
+    // =========================
+    #[Route('/{id}', name: 'app_dressing_show', methods: ['GET'])]
+    public function show(
+        ModeleLocationRepository $modeleLocationRepository,
+        int $id
+    ): Response {
 
-    if (!$modeleLocation) {
-        throw $this->createNotFoundException('ModeleLocation not found');
-    }
+        $modeleLocation = $modeleLocationRepository->find($id);
 
-    $stocks = $modeleLocation->getStockLocations();
-
-    // ------------------------
-    // PHOTOS (ModeleLocation direct)
-    // ------------------------
-    $photos = $modeleLocation->getStockLocationImages()->toArray();
-
-    usort($photos, fn($a, $b) =>
-        ($a->getOrdre() ?? PHP_INT_MAX) <=> ($b->getOrdre() ?? PHP_INT_MAX)
-    );
-
-    // ------------------------
-    // COULEURS (via StockLocation)
-    // ------------------------
-    $couleurs = [];
-
-    foreach ($stocks as $stock) {
-        $couleur = $stock->getCouleur();
-
-        if ($couleur) {
-            $couleurs[$couleur->getId()] = $couleur;
+        if (!$modeleLocation) {
+            throw $this->createNotFoundException('ModeleLocation not found');
         }
-    }
 
-    $couleurs = array_values($couleurs);
+        $stocks = $modeleLocation->getStockLocations();
 
-    // ------------------------
-    // TAILLES
-    // ------------------------
-    $tailles = [];
+        // PHOTOS
+        $photos = $modeleLocation->getStockLocationImages()->toArray();
 
-    foreach ($stocks as $stock) {
-        if ($stock->getTaille()) {
-            $tailles[$stock->getTaille()] = $stock->getTaille();
+        usort($photos, fn($a, $b) =>
+            ($a->getOrdre() ?? PHP_INT_MAX) <=> ($b->getOrdre() ?? PHP_INT_MAX)
+        );
+
+        // COULEURS
+        $couleurs = [];
+        foreach ($stocks as $stock) {
+            $couleur = $stock->getCouleur();
+            if ($couleur) {
+                $couleurs[$couleur->getId()] = $couleur;
+            }
         }
+        $couleurs = array_values($couleurs);
+
+        // TAILLES
+        $tailles = [];
+        foreach ($stocks as $stock) {
+            if ($stock->getTaille()) {
+                $tailles[$stock->getTaille()] = $stock->getTaille();
+            }
+        }
+        $tailles = array_values($tailles);
+
+        // STOCK JS
+        $stocksArray = [];
+        foreach ($stocks as $stock) {
+            $stocksArray[] = [
+                'id' => $stock->getId(),
+                'taille' => $stock->getTaille(),
+                'quantite' => $stock->getQuantite(),
+                'couleur' => [
+                    'id' => $stock->getCouleur()?->getId(),
+                    'nom' => $stock->getCouleur()?->getNomCouleur(),
+                ]
+            ];
+        }
+
+        return $this->render('dressing/show.html.twig', [
+            'modele_location' => $modeleLocation,
+            'photos' => $photos,
+            'main_photo' => $photos[0] ?? null,
+            'couleurs' => $couleurs,
+            'tailles' => $tailles,
+            'stocks' => $stocks,
+            'stocks_js' => $stocksArray,
+        ]);
     }
 
-    $tailles = array_values($tailles);
-
-    return $this->render('dressing/show.html.twig', [
-        'modele_location' => $modeleLocation,
-        'photos' => $photos,
-        'couleurs' => $couleurs,
-        'tailles' => $tailles,
-        'main_photo' => $photos[0] ?? null,
-    ]);
-}
-
-#[Route('/reservation/create', name: 'app_reservation_create', methods: ['GET', 'POST'])]
+    // =========================
+    // CRÉATION RÉSERVATION
+    // =========================
+  #[Route('/reservation/create', name: 'app_reservation_create', methods: ['GET','POST'])]
 public function createReservation(
     Request $request,
     EntityManagerInterface $em,
-    StockLocationRepository $stockRepo
-): Response {
+    SessionInterface $session,
+    StockLocationRepository $stockLocationRepository
+): Response
+{
 
-    // formulaire soumis
     if ($request->isMethod('POST')) {
+
 
         $reservation = new CommandeLocation();
 
-        // créneau choisi
-        $dateDebut = $request->request->get('date_debut');
-        $dateFin = $request->request->get('date_fin');
-
-        $reservation->setDateDebutLoc(new \DateTimeImmutable($dateDebut));
-
-        if ($dateFin) {
-            $reservation->setDateFinLoc(new \DateTimeImmutable($dateFin));
-        }
-
-        // utilisateur connecté
         $reservation->setUser($this->getUser());
 
-        // statut initial
         $reservation->setStatut('en_attente');
 
-        /**
-         * =========================
-         * MODE SÉLECTION MODÈLES
-         * =========================
-         * On peut envoyer une liste de stock IDs
-         */
-        $stockIds = $request->request->all('stocks');
 
-        if (!empty($stockIds)) {
-            foreach ($stockIds as $stockId) {
+        // ==========================
+        // CRENEAUX CLIENT
+        // ==========================
 
-                $stock = $stockRepo->find($stockId);
+        $reservation->setCreneauxClient(
+            $request->request->all('creneaux_client')
+        );
 
-                if ($stock) {
-                    $ligne = new LigneCommandeLocation();
-                    $ligne->setStockloc($stock);
-                    $ligne->setQuantite(1);    
-            
-                }
-            }
-        }
+
+        $reservation->setCommentaire(
+            $request->request->get('commentaire')
+        );
+
+
 
         $em->persist($reservation);
+
+
+
+        // ==========================
+        // MODELES DU SHOWROOM
+        // ==========================
+
+        $showroom = $session->get('showroom', []);
+
+
+
+        foreach ($showroom as $stockId) {
+
+
+            $stock = $stockLocationRepository->find($stockId);
+
+
+            if (!$stock) {
+                continue;
+            }
+
+
+
+            $ligne = new LigneCommandeLocation();
+
+
+            $ligne->setCommandeloc($reservation);
+
+            $ligne->setStockloc($stock);
+
+
+            // prix actuel du modèle
+            $ligne->setPrix(
+                $stock->getModeleLocation()->getPrixLocation()
+            );
+
+
+            // quantité essayée
+            $ligne->setQuantite(1);
+
+
+
+            $em->persist($ligne);
+
+        }
+
+
+
         $em->flush();
 
-        return $this->redirectToRoute('app_reservation_success');
+
+
+        // ==========================
+        // NETTOYAGE SHOWROOM
+        // ==========================
+
+        $session->remove('showroom');
+
+
+
+        return $this->redirectToRoute(
+            'app_reservation_success'
+        );
+
     }
 
-    // affichage formulaire
-    $stocks = $stockRepo->findAll();
 
-    return $this->render('reservation/create.html.twig', [
-        'stocks' => $stocks
-    ]);
+
+    return $this->render(
+        'reservation/create.html.twig'
+    );
 }
 
-#[Route('/reservation/success', name: 'app_reservation_success')]
-public function success(): Response
-{
-    return $this->render('reservation/success.html.twig');
+    // =========================
+    // SUCCESS PAGE
+    // =========================
+    #[Route('/reservation/success', name: 'app_reservation_success')]
+    public function success(): Response
+    {
+        return $this->render('reservation/success.html.twig');
+    }
 }
-
-}
-

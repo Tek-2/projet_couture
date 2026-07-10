@@ -2222,4 +2222,19 @@ form div {
     .info-item p {
         font-size: 0.8rem;
     }
+
+    .btn-couleur.selected {
+        border: 3px solid #000 !important;
+        transform: scale(1.1);
+    }
+
+    .btn-taille.selected {
+        background-color: #000 !important;
+        color: #fff !important;
+    }
+
+    .btn-couleur,
+    .btn-taille {
+        transition: all 0.2s ease;
+    }
 }

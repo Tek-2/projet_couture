@@ -53,12 +53,19 @@
             <div class="d-flex gap-2 flex-wrap">
 
                 {% for couleur in couleurs %}
-                    <button class="btn btn-outline-dark btn-couleur"
-                            data-id="{{ couleur.id }}">
-
-                        <img src="{{ couleur.image }}" width="20">
-                        {{ couleur.nom }}
-
+                    <button class="btn-couleur"
+                            data-id="{{ couleur.id }}"
+                            title="{{ couleur.getNomCouleur }}"
+                            style="
+                                width: 35px;
+                                height: 35px;
+                                border-radius: 50%;
+                                border: 2px solid #ddd;
+                                background-image: url('{{ couleur.getImageCouleur }}');
+                                background-size: cover;
+                                background-position: center;
+                                cursor: pointer;
+                            ">
                     </button>
                 {% endfor %}
 
@@ -70,7 +77,8 @@
             <div class="d-flex gap-2 flex-wrap">
 
                 {% for taille in tailles %}
-                    <button class="btn btn-outline-secondary btn-taille">
+                    <button class="btn btn-outline-secondary btn-taille"
+                            data-taille="{{ taille }}">
                         {{ taille }}
                     </button>
                 {% endfor %}
@@ -85,13 +93,113 @@
 
             </div>
 
+            <button id="addToShowroom" class="btn btn-primary mt-3">
+                Ajouter à mon Showroom
+            </button>
+                        
+            {# <a href="{{ path('app_showroom_add', {id: modele_location.id}) }}">
+                Ajouter à mon Showroom
+            </a>
+
+            N'apparait pas ppour l'ibnstant
             <button id="btnLouer" class="btn btn-primary w-100 mt-3" disabled>
                 Louer ce modèle
-            </button>
+            </button>#}
 
         </div>
 
     </div>
 
 </div>
+
+
+
+<script>
+let selectedColor = null;
+let selectedSize = null;
+let selectedStockId = null;
+
+const stocks = {{ stocks_js|json_encode|raw }};
+
+document.querySelectorAll('.btn-couleur').forEach(btn => {
+    btn.addEventListener('click', () => {
+
+        selectedColor = btn.dataset.id;
+
+        // reset visuel
+        document.querySelectorAll('.btn-couleur')
+            .forEach(b => b.classList.remove('selected'));
+
+        // sélection visuelle
+        btn.classList.add('selected');
+
+        updateStock();
+    });
+});
+document.querySelectorAll('.btn-taille').forEach(btn => {
+    btn.addEventListener('click', () => {
+
+        selectedSize = btn.dataset.taille;
+
+        document.querySelectorAll('.btn-taille')
+            .forEach(b => b.classList.remove('selected'));
+
+        btn.classList.add('selected');
+
+        updateStock();
+    });
+});
+
+function updateStock() {
+
+    if (!selectedColor || !selectedSize) {
+        selectedStockId = null;
+        return;
+    }
+
+    const match = stocks.find(s =>
+        s.couleur.id == selectedColor &&
+        s.taille == selectedSize
+    );
+
+    if (match) {
+        selectedStockId = match.id;
+
+        document.getElementById('stockInfo').innerHTML =
+            "Disponible : " + match.quantite + " pièce(s)";
+    } else {
+        selectedStockId = null;
+
+        document.getElementById('stockInfo').innerHTML =
+            "<span class='text-danger'>Non disponible</span>";
+    }
+}
+
+document.getElementById('addToShowroom').addEventListener('click', () => {
+
+    if (!selectedStockId) {
+        alert("Sélectionnez une taille et une couleur disponibles");
+        return;
+    }
+
+    window.location.href = "/showroom/add/" + selectedStockId;
+});
+
+</script>
+<style>
+.btn-couleur.selected {
+        border: 3px solid #000 !important;
+        transform: scale(1.1);
+    }
+
+    .btn-taille.selected {
+        background-color: #000 !important;
+        color: #fff !important;
+    }
+
+    .btn-couleur,
+    .btn-taille {
+        transition: all 0.2s ease;
+    }
+    </style>
 {% endblock %}
