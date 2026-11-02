@@ -27,19 +27,15 @@
                             </tr>
                             <tr>
                                 <th class="text-muted">Date début location</th>
-                                <td>{{ commande_location.dateDebutLoc ? commande_location.dateDebutLoc|date('d/m/Y') : '' }}</td>
+                                <td>{{ commande_location.propositionDebut ? commande_location.propositionDebut|date('d/m/Y') : '' }}</td>
                             </tr>
                             <tr>
                                 <th class="text-muted">Date fin location</th>
-                                <td>{{ commande_location.dateFinLoc ? commande_location.dateFinLoc|date('d/m/Y') : '' }}</td>
+                                <td>{{ commande_location.propositionFin ? commande_location.propositionFin|date('d/m/Y') : '' }}</td>
                             </tr>
                             <tr>
                                 <th class="text-muted">Statut</th>
                                 <td>{{ commande_location.statut }}</td>
-                            </tr>
-                            <tr>
-                                <th class="text-muted">Montant total</th>
-                                <td>{{ commande_location.montantTotal }} €</td>
                             </tr>
                         </tbody>
                     </table>

@@ -12,7 +12,6 @@
                     <th>Id</th>
                     <th>Taille</th>
                     <th>Quantité</th>
-                    <th>Image Variante</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -22,11 +21,6 @@
                     <td>{{ stock_location.id }}</td>
                     <td>{{ stock_location.taille }}</td>
                     <td>{{ stock_location.quantite }}</td>
-                    <td>{% if stock_location.imageVariante %}
-                        <img src="{{ asset('uploads/' ~ stock_location.imageVariante) }}" alt="{{ stock_location.id }}">
-                    {% else %}
-                        N/A
-                    {% endif %}</td>
                     <td>
                         <a class="btn btn-primary" href="{{ path('app_stock_location_show', {'id': stock_location.id}) }}">
                             <i class="fa fa-eye"></i>
@@ -38,7 +32,7 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="5">no records found</td>
+                    <td colspan="4">no records found</td>
                 </tr>
             {% endfor %}
             </tbody>

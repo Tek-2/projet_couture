@@ -17,11 +17,11 @@ class LigneCommandeLocationType extends AbstractType
         $builder
             ->add('prix')
             ->add('quantite')
-            ->add('id_commandeloc', EntityType::class, [
+            ->add('commandeloc', EntityType::class, [
                 'class' => CommandeLocation::class,
                 'choice_label' => 'id',
             ])
-            ->add('id_stockloc', EntityType::class, [
+            ->add('stockloc', EntityType::class, [
                 'class' => StockLocation::class,
                 'choice_label' => 'id',
             ])

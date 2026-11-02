@@ -6,9 +6,23 @@ use App\Repository\CommandeLocationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get; 
+use ApiPlatform\Metadata\GetCollection; 
+use ApiPlatform\Metadata\Post; 
+use ApiPlatform\Metadata\Put; 
+use ApiPlatform\Metadata\Delete;
+use App\State\CommandeLocationProcessor;
 
-#[ORM\Entity(repositoryClass: CommandeLocationRepository::class)]
-#[ApiResource]
+#[ORM\Entity(repositoryClass: CommandeLocationRepository::class)] 
+#[ApiResource( 
+    operations: [ 
+        new GetCollection(security: "is_granted('ROLE_ADMIN')"), 
+        new Post( security: "is_granted('ROLE_USER')", processor: CommandeLocationProcessor::class ), 
+        new Get(security: "is_granted('ROLE_ADMIN') or object.getUser() == user"), 
+        new Put(security: "is_granted('ROLE_ADMIN') or object.getUser() == user"), 
+        new Delete(security: "is_granted('ROLE_ADMIN') or object.getUser() == user"), 
+    ] 
+)] 
 class CommandeLocation
 {
     #[ORM\Id]
@@ -16,7 +30,7 @@ class CommandeLocation
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'commandeLocations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 

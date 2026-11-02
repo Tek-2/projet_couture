@@ -52,6 +52,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
+
     public function getEmail(): ?string
     {
         return $this->email;
@@ -85,6 +86,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return array_unique($roles);
     }
+    
 
     /**
      * @param list<string> $roles

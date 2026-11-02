@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\LigneCommandeLocation;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/dressing')]
 final class DressingController extends AbstractController
@@ -99,7 +100,8 @@ final class DressingController extends AbstractController
     // CRÉATION RÉSERVATION
     // =========================
   #[Route('/reservation/create', name: 'app_reservation_create', methods: ['GET','POST'])]
-public function createReservation(
+  #[IsGranted('ROLE_USER')]
+  public function createReservation(
     Request $request,
     EntityManagerInterface $em,
     SessionInterface $session,
@@ -112,7 +114,11 @@ public function createReservation(
 
         $reservation = new CommandeLocation();
 
-        $reservation->setUser($this->getUser());
+        $user = $this->getUser();
+        if (!$user) {
+            throw $this->createAccessDeniedException();
+        }
+        $reservation->setUser($user);
 
         $reservation->setStatut('en_attente');
 

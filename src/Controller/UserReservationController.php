@@ -2,26 +2,28 @@
 
 namespace App\Controller;
 
-use App\Entity\CommandeLocation;
 use App\Repository\CommandeLocationRepository;
+use App\Repository\LigneCommandeLocationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Repository\LigneCommandeLocationRepository;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/mes-reservations')]
+#[IsGranted('ROLE_USER')]
 class UserReservationController extends AbstractController
 {
 
-    // =========================
+    // =====================================
     // LISTE DES RESERVATIONS CLIENT
-    // =========================
+    // =====================================
 
-    #[Route('', name: 'app_user_reservations', methods: ['GET'])]
+    #[Route('', name: 'user_reservations', methods: ['GET'])]
     public function index(
         CommandeLocationRepository $repository
-    ): Response {
+    ): JsonResponse {
 
         $reservations = $repository->findBy(
             [
@@ -32,177 +34,100 @@ class UserReservationController extends AbstractController
             ]
         );
 
+        $result = [];
 
-        return $this->render(
-            'reservation/user/index.html.twig',
-            [
-                'reservations' => $reservations
-            ]
-        );
-    }
+        foreach ($reservations as $reservation) {
 
+            $result[] = [
 
+                'id' => $reservation->getId(),
 
-    // =========================
-    // DETAIL RESERVATION
-    // =========================
+                'statut' =>
+                    $reservation->getStatut(),
 
-    #[Route('/{id}', name: 'app_user_reservation_show', methods: ['GET'])]
-    public function show(
-    CommandeLocation $reservation,
-    LigneCommandeLocationRepository $ligneRepository
-): Response {
+                'dateCommande' =>
+                    $reservation->getDateCommande()
+                        ?->format('Y-m-d H:i:s'),
 
+                'commentaire' =>
+                    $reservation->getCommentaire(),
 
-        // Sécurité :
-        // un client ne peut voir que ses propres réservations
+                'dateDebutValidee' =>
+                    $reservation->getDateDebutValidee()
+                        ?->format('Y-m-d H:i:s'),
 
-        if ($reservation->getUser() !== $this->getUser()) {
+                'dateFinValidee' =>
+                    $reservation->getDateFinValidee()
+                        ?->format('Y-m-d H:i:s'),
 
-            throw $this->createAccessDeniedException(
-                'Vous ne pouvez pas consulter cette réservation.'
-            );
+            ];
+
         }
 
-        $lignes = $ligneRepository->findBy([
-            'commandeloc' => $reservation
+        return $this->json([
+
+            'success' => true,
+
+            'reservations' => $result
+
         ]);
 
-        return $this->render(
-            'reservation/user/show.html.twig',
-            [
-                'reservation' => $reservation,
-                'lignes' => $lignes
-            ]
-        );
     }
 
 
 
-    // =========================
-    // CLIENT ACCEPTE LA PROPOSITION ADMIN
-    // =========================
+    // =====================================
+    // DETAIL RESERVATION
+    // =====================================
 
-    #[Route('/{id}/accepter', name: 'reservation_accepter', methods: ['POST'])]
-    public function accepter(
-        CommandeLocation $reservation,
-        EntityManagerInterface $em
-    ): Response {
+    #[Route('/{id}', name: 'user_reservation_show', methods: ['GET'])]
+    public function show(
+        int $id,
+        CommandeLocationRepository $repository
+    ): JsonResponse {
 
+        $reservation =
+            $repository->find($id);
+
+        if (!$reservation) {
+
+            return $this->json([
+                'success' => false,
+                'message' => 'Réservation introuvable'
+            ], 404);
+
+        }
+
+        // Sécurité :
+        // une cliente ne peut consulter que ses propres réservations
 
         if ($reservation->getUser() !== $this->getUser()) {
 
-            throw $this->createAccessDeniedException();
+            return $this->json([
+                'success' => false,
+                'message' => 'Accès refusé.'
+            ], 403);
+
         }
 
+        return $this->json([
 
-        // Vérification qu'une proposition existe
+            'id' => $reservation->getId(),
 
-        if (!$reservation->getPropositionDebut()) {
+            'statut' => $reservation->getStatut(),
 
-            $this->addFlash(
-                'danger',
-                'Aucun créneau proposé.'
-            );
+            'commentaire' => $reservation->getCommentaire(),
 
-            return $this->redirectToRoute(
-                'app_user_reservation_show',
-                [
-                    'id' => $reservation->getId()
-                ]
-            );
-        }
+            'dateDebutValidee' =>
+                $reservation->getDateDebutValidee()
+                    ?->format('Y-m-d H:i:s'),
 
+            'dateFinValidee' =>
+                $reservation->getDateFinValidee()
+                    ?->format('Y-m-d H:i:s')
 
+        ]);
 
-        // Validation finale
-
-        $reservation->setDateDebutValidee(
-            $reservation->getPropositionDebut()
-        );
-
-        $reservation->setDateFinValidee(
-            $reservation->getPropositionFin()
-        );
-
-
-        $reservation->setStatut('valide');
-
-
-
-        // On nettoie la proposition temporaire
-
-        $reservation->setPropositionDebut(null);
-        $reservation->setPropositionFin(null);
-
-
-
-        $em->flush();
-
-
-
-        $this->addFlash(
-            'success',
-            'Votre rendez-vous a été validé.'
-        );
-
-
-        return $this->redirectToRoute(
-            'app_user_reservation_show',
-            [
-                'id' => $reservation->getId()
-            ]
-        );
-    }
-
-
-
-    // =========================
-    // CLIENT REFUSE LA PROPOSITION ADMIN
-    // =========================
-
-    #[Route('/{id}/refuser', name: 'reservation_refuser', methods: ['POST'])]
-    public function refuser(
-        CommandeLocation $reservation,
-        EntityManagerInterface $em
-    ): Response {
-
-
-        if ($reservation->getUser() !== $this->getUser()) {
-
-            throw $this->createAccessDeniedException();
-        }
-
-
-
-        $reservation->setStatut('refuse_client');
-
-
-
-        // Suppression de la proposition admin
-
-        $reservation->setPropositionDebut(null);
-        $reservation->setPropositionFin(null);
-
-
-
-        $em->flush();
-
-
-
-        $this->addFlash(
-            'info',
-            'Le créneau proposé a été refusé.'
-        );
-
-
-
-        return $this->redirectToRoute(
-            'app_user_reservation_show',
-            [
-                'id' => $reservation->getId()
-            ]
-        );
     }
 
 }

@@ -17,7 +17,6 @@ class StockLocationType extends AbstractType
         $builder
             ->add('taille')
             ->add('quantite')
-            ->add('imageVariante')
             ->add('couleur', EntityType::class, [
                 'class' => Couleur::class,
                 'choice_label' => 'id',

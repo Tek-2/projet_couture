@@ -22,14 +22,6 @@ class RegistrationFormType extends AbstractType
             ->add('prenom')
             ->add('tel')
             ->add('adresse')
-            ->add('roles', ChoiceType::class, [
-    'choices' => [
-        'Utilisateur' => 'ROLE_USER',
-        'Admin' => 'ROLE_ADMIN',
-    ],
-    'multiple' => true,
-    'expanded' => true,
-])
             ->add('email')
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,

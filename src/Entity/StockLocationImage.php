@@ -4,8 +4,13 @@ namespace App\Entity;
 
 use App\Repository\StockLocationImageRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: StockLocationImageRepository::class)]
+#[ApiResource(
+    normalizationContext: ['groups' => ['stock:read']]
+)]
 class StockLocationImage
 {
     #[ORM\Id]
@@ -13,13 +18,16 @@ class StockLocationImage
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['stock:read'])]
     #[ORM\ManyToOne(inversedBy: 'stockLocationImages')]
     #[ORM\JoinColumn(nullable: false)]
     private ?ModeleLocation $modeleLocation = null;
 
+    #[Groups(['stock:read', 'modele:read'])]
     #[ORM\Column(length: 255)]
     private ?string $url = null;
 
+    #[Groups(['stock:read', 'modele:read'])]
     #[ORM\Column(nullable: true)]
     private ?int $ordre = null;
 
